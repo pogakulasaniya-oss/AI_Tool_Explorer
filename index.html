@@ -1,0 +1,2321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>AI Tool Explorer</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, sans-serif;
+}
+
+body{
+    background:#080b16;
+    color:white;
+    display:flex;
+    min-height:100vh;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+    width:250px;
+    background:#0d1222;
+    border-right:1px solid #202744;
+    padding:25px 15px;
+    position:fixed;
+    height:100vh;
+    left:0;
+    top:0;
+}
+
+.logo{
+    font-size:22px;
+    font-weight:bold;
+    margin-bottom:35px;
+    text-align:center;
+}
+
+.logo span{
+    color:#7c5cff;
+}
+
+.nav-btn{
+    width:100%;
+    background:transparent;
+    color:#bfc5dc;
+    border:none;
+    padding:14px 15px;
+    margin:5px 0;
+    text-align:left;
+    border-radius:10px;
+    cursor:pointer;
+    font-size:15px;
+    transition:0.3s;
+}
+
+.nav-btn:hover,
+.nav-btn.active{
+    background:#1a2140;
+    color:white;
+}
+
+.profile{
+    position:absolute;
+    bottom:25px;
+    left:20px;
+    right:20px;
+    background:#151b31;
+    padding:12px;
+    border-radius:10px;
+    text-align:center;
+    color:#bfc5dc;
+}
+
+/* MAIN */
+
+.main{
+    margin-left:250px;
+    width:calc(100% - 250px);
+    padding:25px;
+}
+
+/* TOPBAR */
+
+.topbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:30px;
+}
+
+.search-box{
+    width:55%;
+}
+
+.search-box input{
+    width:100%;
+    padding:13px 18px;
+    border:none;
+    outline:none;
+    border-radius:10px;
+    background:#12182b;
+    color:white;
+    border:1px solid #252d4b;
+}
+
+.search-box input::placeholder{
+    color:#747c98;
+}
+
+/* SECTIONS */
+
+.section{
+    display:none;
+}
+
+.section.active{
+    display:block;
+}
+
+.hero{
+    background:linear-gradient(135deg,#121a38,#18112d);
+    border:1px solid #282f51;
+    padding:45px;
+    border-radius:18px;
+    margin-bottom:30px;
+}
+
+.hero h1{
+    font-size:40px;
+    margin-bottom:15px;
+}
+
+.hero h1 span{
+    color:#8b6cff;
+}
+
+.hero p{
+    color:#aeb5cf;
+    max-width:700px;
+    line-height:1.7;
+}
+
+/* BUTTON */
+
+.primary-btn{
+    background:linear-gradient(135deg,#7157ff,#9a55ff);
+    color:white;
+    border:none;
+    padding:12px 18px;
+    border-radius:9px;
+    cursor:pointer;
+    font-weight:bold;
+    margin-top:15px;
+}
+
+.primary-btn:hover{
+    opacity:0.85;
+}
+
+/* HEADER */
+
+.section-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:25px;
+}
+
+.section-header h2{
+    font-size:28px;
+}
+
+.section-header p{
+    color:#8d96b4;
+    margin-top:6px;
+}
+
+/* CARDS */
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+    gap:18px;
+}
+
+.card,
+.tool-card{
+    background:#10162a;
+    border:1px solid #252d4a;
+    border-radius:15px;
+    padding:22px;
+    transition:0.3s;
+}
+
+.card:hover,
+.tool-card:hover{
+    transform:translateY(-5px);
+    border-color:#725cff;
+}
+
+.card h3,
+.tool-card h3{
+    margin:12px 0 8px;
+}
+
+.card p,
+.tool-card p{
+    color:#929bb8;
+    line-height:1.5;
+    font-size:14px;
+}
+
+.tool-icon{
+    font-size:35px;
+}
+
+.category{
+    display:inline-block;
+    margin-top:10px;
+    padding:5px 9px;
+    border-radius:20px;
+    background:#1c2340;
+    color:#9f91ff;
+    font-size:12px;
+}
+
+.view-btn{
+    width:100%;
+    padding:10px;
+    margin-top:15px;
+    border:none;
+    border-radius:8px;
+    background:#1c2545;
+    color:white;
+    cursor:pointer;
+}
+
+.view-btn:hover{
+    background:#7157ff;
+}
+
+/* MODAL */
+
+.modal{
+    display:none;
+    position:fixed;
+    z-index:1000;
+    left:0;
+    top:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.75);
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+}
+
+.modal-content{
+    width:700px;
+    max-width:100%;
+    max-height:90vh;
+    overflow-y:auto;
+    background:#10162a;
+    border:1px solid #30395d;
+    border-radius:18px;
+    padding:30px;
+    position:relative;
+}
+
+.close{
+    position:absolute;
+    right:20px;
+    top:15px;
+    font-size:30px;
+    cursor:pointer;
+    color:#9aa3c1;
+}
+
+.close:hover{
+    color:white;
+}
+
+.modal-content h2{
+    margin-bottom:20px;
+}
+
+.detail-box{
+    margin-top:18px;
+}
+
+.detail-box h3{
+    color:#9b87ff;
+    margin-bottom:7px;
+}
+
+.detail-box p,
+.detail-box li{
+    color:#aeb5cd;
+    line-height:1.6;
+}
+
+.detail-box ul{
+    padding-left:20px;
+}
+
+/* FORM */
+
+.form-group{
+    margin-bottom:15px;
+}
+
+.form-group label{
+    display:block;
+    margin-bottom:7px;
+    color:#bfc6df;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select{
+    width:100%;
+    padding:12px;
+    border-radius:8px;
+    border:1px solid #2a3455;
+    background:#080d1c;
+    color:white;
+    outline:none;
+}
+
+.form-group textarea{
+    min-height:90px;
+    resize:vertical;
+}
+
+/* FINDER */
+
+.finder-box{
+    background:#10162a;
+    border:1px solid #252d4a;
+    border-radius:15px;
+    padding:25px;
+    max-width:600px;
+}
+
+.finder-box select{
+    width:100%;
+    padding:13px;
+    background:#080d1c;
+    color:white;
+    border:1px solid #2a3455;
+    border-radius:8px;
+    margin:15px 0;
+}
+
+/* CHAT */
+
+.chat-container{
+    background:#10162a;
+    border:1px solid #252d4a;
+    border-radius:15px;
+    height:600px;
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+}
+
+.chat-header{
+    padding:18px;
+    background:#151c32;
+    border-bottom:1px solid #272f4d;
+}
+
+.chat-header h3{
+    margin-bottom:5px;
+}
+
+.chat-header p{
+    color:#8e97b3;
+    font-size:13px;
+}
+
+.chat-messages{
+    flex:1;
+    overflow-y:auto;
+    padding:20px;
+}
+
+.bot-message,
+.user-message{
+    max-width:75%;
+    padding:13px 16px;
+    border-radius:12px;
+    margin-bottom:15px;
+    line-height:1.5;
+}
+
+.bot-message{
+    background:#1a2140;
+    color:#d8dcf0;
+}
+
+.user-message{
+    background:#7157ff;
+    margin-left:auto;
+    color:white;
+}
+
+.chat-input-area{
+    display:flex;
+    gap:10px;
+    padding:15px;
+    border-top:1px solid #272f4d;
+}
+
+.chat-input-area input{
+    flex:1;
+    padding:13px;
+    border-radius:9px;
+    border:1px solid #2a3455;
+    background:#080d1c;
+    color:white;
+    outline:none;
+}
+
+.chat-input-area button{
+    margin-top:0;
+}
+
+/* ROADMAP */
+
+.roadmap-item{
+    background:#10162a;
+    border-left:4px solid #725cff;
+    padding:20px;
+    margin-bottom:15px;
+    border-radius:8px;
+}
+
+.roadmap-item h3{
+    margin-bottom:8px;
+}
+
+.roadmap-item p{
+    color:#929bb8;
+    line-height:1.5;
+}
+
+/* MOBILE */
+
+@media(max-width:800px){
+
+    .sidebar{
+        width:200px;
+    }
+
+    .main{
+        margin-left:200px;
+        width:calc(100% - 200px);
+    }
+
+    .hero h1{
+        font-size:30px;
+    }
+
+}
+
+@media(max-width:600px){
+
+    .sidebar{
+        width:70px;
+        padding:15px 8px;
+    }
+
+    .logo{
+        font-size:0;
+    }
+
+    .logo span{
+        font-size:20px;
+    }
+
+    .nav-btn{
+        font-size:0;
+        text-align:center;
+    }
+
+    .profile{
+        display:none;
+    }
+
+    .main{
+        margin-left:70px;
+        width:calc(100% - 70px);
+        padding:15px;
+    }
+
+    .topbar{
+        display:block;
+    }
+
+    .search-box{
+        width:100%;
+    }
+
+    .hero{
+        padding:25px;
+    }
+
+    .hero h1{
+        font-size:27px;
+    }
+
+    .section-header{
+        display:block;
+    }
+
+}
+
+/* SEARCH HIDE */
+
+.hidden{
+    display:none !important;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+
+<div class="sidebar">
+
+    <div class="logo">
+        🤖 <span>AI Tool Explorer</span>
+    </div>
+
+    <button class="nav-btn active"
+            onclick="showSection('home',this)">
+        🏠 Home
+    </button>
+
+    <button class="nav-btn"
+            onclick="showSection('about',this)">
+        🧠 About AI
+    </button>
+
+    <button class="nav-btn"
+            onclick="showSection('tools',this)">
+        🤖 AI Tools
+    </button>
+
+    <button class="nav-btn"
+            onclick="showSection('finder',this)">
+        🔎 Tool Finder
+    </button>
+
+    <button class="nav-btn"
+            onclick="showSection('chat',this)">
+        💬 AI Chat
+    </button>
+
+    <button class="nav-btn"
+            onclick="showSection('thoughtworks',this)">
+        💼 Thoughtworks
+    </button>
+
+    <button class="nav-btn"
+            onclick="showSection('roadmap',this)">
+        🗺️ Learning Roadmap
+    </button>
+
+    <div class="profile">
+        👤 AI Explorer
+    </div>
+
+</div>
+
+
+<!-- MAIN -->
+
+<div class="main">
+
+    <!-- TOP BAR -->
+
+    <div class="topbar">
+
+        <div class="search-box">
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="Search AI tools..."
+                onkeyup="searchTools()">
+        </div>
+
+    </div>
+
+
+    <!-- HOME -->
+
+    <section id="home" class="section active">
+
+        <div class="hero">
+
+            <h1>
+                Explore <span>AI</span>.
+                Learn AI.
+                Choose the Right AI Tool.
+            </h1>
+
+            <p>
+                Discover powerful Artificial Intelligence tools,
+                understand their features and use cases,
+                and choose the right tool for your learning,
+                coding, research and creative work.
+            </p>
+
+            <button class="primary-btn"
+                    onclick="showSection('tools')">
+                Explore AI Tools →
+            </button>
+
+        </div>
+
+
+        <div class="section-header">
+            <div>
+                <h2>What You Can Explore</h2>
+            </div>
+        </div>
+
+        <div class="grid">
+
+            <div class="card">
+                <div class="tool-icon">🧠</div>
+                <h3>About AI</h3>
+                <p>
+                    Learn the basics of Artificial Intelligence,
+                    Machine Learning and Generative AI.
+                </p>
+            </div>
+
+            <div class="card">
+                <div class="tool-icon">🤖</div>
+                <h3>AI Tools</h3>
+                <p>
+                    Explore popular AI tools and their features,
+                    advantages and limitations.
+                </p>
+            </div>
+
+            <div class="card">
+                <div class="tool-icon">🔎</div>
+                <h3>Tool Finder</h3>
+                <p>
+                    Find suitable AI tools based on your purpose.
+                </p>
+            </div>
+
+            <div class="card">
+                <div class="tool-icon">💬</div>
+                <h3>AI Chat</h3>
+                <p>
+                    Ask questions and interact with an AI assistant.
+                </p>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ABOUT AI -->
+
+    <section id="about" class="section">
+
+        <div class="section-header">
+            <div>
+                <h2>🧠 About Artificial Intelligence</h2>
+                <p>Understand the basics of AI.</p>
+            </div>
+        </div>
+
+        <div class="card">
+
+            <h3>What is Artificial Intelligence?</h3>
+
+            <p>
+                Artificial Intelligence is a technology that allows
+                computers to perform tasks that normally require
+                human intelligence.
+            </p>
+
+            <br>
+
+            <h3>Examples of AI</h3>
+
+            <p>
+                Chatbots, recommendation systems, image recognition,
+                voice assistants, self-driving technology and
+                Generative AI are examples of AI applications.
+            </p>
+
+            <br>
+
+            <h3>Generative AI</h3>
+
+            <p>
+                Generative AI can create new content such as text,
+                images, code, audio and other forms of content.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- AI TOOLS -->
+
+    <section id="tools" class="section">
+
+        <div class="section-header">
+
+            <div>
+                <h2>🤖 AI Tools</h2>
+                <p>Explore popular and custom AI tools.</p>
+            </div>
+
+            <button class="primary-btn"
+                    onclick="openAddTool()">
+                ➕ Add AI Tool
+            </button>
+
+        </div>
+
+
+        <div id="toolsGrid" class="grid">
+
+            <!-- CHATGPT -->
+
+            <div class="tool-card searchable"
+                 data-name="chatgpt">
+
+                <div class="tool-icon">💬</div>
+
+                <h3>ChatGPT</h3>
+
+                <span class="category">
+                    Productivity
+                </span>
+
+                <p>
+                    AI assistant for learning, writing,
+                    coding and brainstorming.
+                </p>
+
+                <button class="view-btn"
+                        onclick="openTool('ChatGPT')">
+                    View Details
+                </button>
+
+            </div>
+
+
+            <!-- GEMINI -->
+
+            <div class="tool-card searchable"
+                 data-name="google gemini">
+
+                <div class="tool-icon">✨</div>
+
+                <h3>Google Gemini</h3>
+
+                <span class="category">
+                    Productivity
+                </span>
+
+                <p>
+                    Google's AI assistant for research,
+                    writing and productivity.
+                </p>
+
+                <button class="view-btn"
+                        onclick="openTool('Google Gemini')">
+                    View Details
+                </button>
+
+            </div>
+
+
+            <!-- CLAUDE -->
+
+            <div class="tool-card searchable"
+                 data-name="claude">
+
+                <div class="tool-icon">🟠</div>
+
+                <h3>Claude</h3>
+
+                <span class="category">
+                    Writing
+                </span>
+
+                <p>
+                    AI assistant useful for writing,
+                    analysis and coding.
+                </p>
+
+                <button class="view-btn"
+                        onclick="openTool('Claude')">
+                    View Details
+                </button>
+
+            </div>
+
+
+            <!-- COPILOT -->
+
+            <div class="tool-card searchable"
+                 data-name="github copilot">
+
+                <div class="tool-icon">🐙</div>
+
+                <h3>GitHub Copilot</h3>
+
+                <span class="category">
+                    Coding
+                </span>
+
+                <p>
+                    AI coding assistant that helps developers
+                    write and understand code.
+                </p>
+
+                <button class="view-btn"
+                        onclick="openTool('GitHub Copilot')">
+                    View Details
+                </button>
+
+            </div>
+
+
+            <!-- CANVA -->
+
+            <div class="tool-card searchable"
+                 data-name="canva ai">
+
+                <div class="tool-icon">🎨</div>
+
+                <h3>Canva AI</h3>
+
+                <span class="category">
+                    Design
+                </span>
+
+                <p>
+                    AI-powered design and content creation tools.
+                </p>
+
+                <button class="view-btn"
+                        onclick="openTool('Canva AI')">
+                    View Details
+                </button>
+
+            </div>
+
+
+            <!-- PERPLEXITY -->
+
+            <div class="tool-card searchable"
+                 data-name="perplexity">
+
+                <div class="tool-icon">🔍</div>
+
+                <h3>Perplexity</h3>
+
+                <span class="category">
+                    Research
+                </span>
+
+                <p>
+                    AI search and research assistant.
+                </p>
+
+                <button class="view-btn"
+                        onclick="openTool('Perplexity')">
+                    View Details
+                </button>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- TOOL FINDER -->
+
+    <section id="finder" class="section">
+
+        <div class="section-header">
+
+            <div>
+                <h2>🔎 AI Tool Finder</h2>
+                <p>Choose your purpose and find useful tools.</p>
+            </div>
+
+        </div>
+
+
+        <div class="finder-box">
+
+            <h3>What do you need AI for?</h3>
+
+            <select id="finderSelect">
+
+                <option value="">
+                    Select a category
+                </option>
+
+                <option value="study">
+                    📚 Study & Learning
+                </option>
+
+                <option value="coding">
+                    💻 Coding & Development
+                </option>
+
+                <option value="design">
+                    🎨 Design & Creativity
+                </option>
+
+                <option value="research">
+                    🔬 Research
+                </option>
+
+                <option value="writing">
+                    ✍️ Writing
+                </option>
+
+            </select>
+
+            <button class="primary-btn"
+                    onclick="findTool()">
+                Find AI Tools
+            </button>
+
+            <div id="finderResult"></div>
+
+        </div>
+
+    </section>
+
+
+    <!-- AI CHAT -->
+
+    <section id="chat" class="section">
+
+        <div class="section-header">
+
+            <div>
+                <h2>💬 AI Chat</h2>
+                <p>
+                    Ask questions about AI, coding,
+                    technology and learning.
+                </p>
+            </div>
+
+        </div>
+
+
+        <div class="chat-container">
+
+            <div class="chat-header">
+
+                <h3>🤖 AI Assistant</h3>
+
+                <p>
+                    Your AI learning assistant
+                </p>
+
+            </div>
+
+
+            <div id="chatMessages"
+                 class="chat-messages">
+
+                <div class="bot-message">
+
+                    🤖 Hello! I am your AI Assistant.
+                    <br><br>
+                    Ask me a question about AI,
+                    coding, technology or learning.
+
+                </div>
+
+            </div>
+
+
+            <div class="chat-input-area">
+
+                <input
+                    type="text"
+                    id="chatInput"
+                    placeholder="Type your question..."
+                    onkeypress="handleChatKey(event)"
+                >
+
+                <button class="primary-btn"
+                        onclick="sendMessage()">
+                    Send ➤
+                </button>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- THOUGHTWORKS -->
+
+    <section id="thoughtworks" class="section">
+
+        <div class="section-header">
+
+            <div>
+                <h2>💼 Thoughtworks</h2>
+
+                <p>
+                    Learn about software development,
+                    technology and modern engineering.
+                </p>
+            </div>
+
+        </div>
+
+
+        <div class="grid">
+
+            <div class="card">
+
+                <div class="tool-icon">💻</div>
+
+                <h3>Software Development</h3>
+
+                <p>
+                    Learn programming, software engineering,
+                    testing and development practices.
+                </p>
+
+            </div>
+
+
+            <div class="card">
+
+                <div class="tool-icon">🤖</div>
+
+                <h3>AI & Technology</h3>
+
+                <p>
+                    Explore modern AI and technology concepts
+                    useful for future software engineers.
+                </p>
+
+            </div>
+
+
+            <div class="card">
+
+                <div class="tool-icon">🚀</div>
+
+                <h3>Career Preparation</h3>
+
+                <p>
+                    Improve coding, problem solving,
+                    communication and technical skills.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ROADMAP -->
+
+    <section id="roadmap" class="section">
+
+        <div class="section-header">
+
+            <div>
+
+                <h2>🗺️ AI Learning Roadmap</h2>
+
+                <p>
+                    Follow these steps to start learning AI.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="roadmap-item">
+
+            <h3>Step 1 — Programming Basics</h3>
+
+            <p>
+                Learn Python or C programming fundamentals,
+                variables, conditions, loops and functions.
+            </p>
+
+        </div>
+
+
+        <div class="roadmap-item">
+
+            <h3>Step 2 — Mathematics</h3>
+
+            <p>
+                Learn basic statistics, probability,
+                algebra and data concepts.
+            </p>
+
+        </div>
+
+
+        <div class="roadmap-item">
+
+            <h3>Step 3 — Machine Learning</h3>
+
+            <p>
+                Understand datasets, training,
+                testing, classification and regression.
+            </p>
+
+        </div>
+
+
+        <div class="roadmap-item">
+
+            <h3>Step 4 — Generative AI</h3>
+
+            <p>
+                Learn about Large Language Models,
+                AI assistants and prompt engineering.
+            </p>
+
+        </div>
+
+
+        <div class="roadmap-item">
+
+            <h3>Step 5 — AI Projects</h3>
+
+            <p>
+                Build practical AI projects and add them
+                to your resume and portfolio.
+            </p>
+
+        </div>
+
+    </section>
+
+</div>
+
+
+<!-- TOOL DETAILS MODAL -->
+
+<div id="toolModal" class="modal">
+
+    <div class="modal-content">
+
+        <span class="close"
+              onclick="closeToolModal()">
+            &times;
+        </span>
+
+        <h2 id="modalTitle"></h2>
+
+        <div class="detail-box">
+
+            <h3>Overview</h3>
+
+            <p id="modalOverview"></p>
+
+        </div>
+
+
+        <div class="detail-box">
+
+            <h3>Key Features</h3>
+
+            <ul id="modalFeatures"></ul>
+
+        </div>
+
+
+        <div class="detail-box">
+
+            <h3>Use Cases</h3>
+
+            <ul id="modalUses"></ul>
+
+        </div>
+
+
+        <div class="detail-box">
+
+            <h3>Advantages</h3>
+
+            <ul id="modalAdvantages"></ul>
+
+        </div>
+
+
+        <div class="detail-box">
+
+            <h3>Limitations</h3>
+
+            <ul id="modalLimitations"></ul>
+
+        </div>
+
+
+        <div class="detail-box">
+
+            <h3>Best For</h3>
+
+            <p id="modalBest"></p>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ADD AI TOOL MODAL -->
+
+<div id="addToolModal" class="modal">
+
+    <div class="modal-content">
+
+        <span class="close"
+              onclick="closeAddTool()">
+            &times;
+        </span>
+
+        <h2>➕ Add New AI Tool</h2>
+
+
+        <div class="form-group">
+
+            <label>Tool Name</label>
+
+            <input
+                id="toolName"
+                type="text"
+                placeholder="Example: DeepSeek">
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>Category</label>
+
+            <input
+                id="toolCategory"
+                type="text"
+                placeholder="Example: Coding">
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>Description</label>
+
+            <textarea
+                id="toolDescription"
+                placeholder="Write a short description"></textarea>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>Website</label>
+
+            <input
+                id="toolWebsite"
+                type="text"
+                placeholder="https://example.com">
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>Features</label>
+
+            <textarea
+                id="toolFeatures"
+                placeholder="Coding, AI chat, Research"></textarea>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>Use Cases</label>
+
+            <textarea
+                id="toolUses"
+                placeholder="Learning, Coding, Research"></textarea>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>Advantages</label>
+
+            <textarea
+                id="toolAdvantages"
+                placeholder="Easy to use, Fast, Powerful"></textarea>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>Limitations</label>
+
+            <textarea
+                id="toolLimitations"
+                placeholder="Some features may require payment"></textarea>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>Best For</label>
+
+            <input
+                id="toolBestFor"
+                type="text"
+                placeholder="Students and developers">
+
+        </div>
+
+
+        <button class="primary-btn"
+                onclick="saveTool()">
+            Save AI Tool
+        </button>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* =========================
+   TOOL DATA
+========================= */
+
+const tools = {
+
+    "ChatGPT": {
+
+        overview:
+        "ChatGPT is an AI assistant that can help with learning, writing, coding, brainstorming and many other tasks.",
+
+        features:[
+            "AI conversation",
+            "Coding assistance",
+            "Writing help",
+            "Learning support"
+        ],
+
+        uses:[
+            "Students",
+            "Programming",
+            "Writing",
+            "Brainstorming"
+        ],
+
+        advantages:[
+            "Easy to use",
+            "Useful for many tasks",
+            "Good learning assistant"
+        ],
+
+        limitations:[
+            "AI can sometimes make mistakes",
+            "Some advanced features may require a paid plan"
+        ],
+
+        best:
+        "Students, developers, writers and general users"
+
+    },
+
+
+    "Google Gemini": {
+
+        overview:
+        "Google Gemini is an AI assistant designed for research, writing, learning and productivity.",
+
+        features:[
+            "AI chat",
+            "Research assistance",
+            "Writing support",
+            "Multimodal capabilities"
+        ],
+
+        uses:[
+            "Research",
+            "Learning",
+            "Writing",
+            "Productivity"
+        ],
+
+        advantages:[
+            "Useful for research",
+            "Works well with Google's ecosystem"
+        ],
+
+        limitations:[
+            "Answers should be verified",
+            "Some features vary by region or plan"
+        ],
+
+        best:
+        "Students, researchers and productivity users"
+
+    },
+
+
+    "Claude": {
+
+        overview:
+        "Claude is an AI assistant developed for conversation, writing, analysis and coding.",
+
+        features:[
+            "Long-form writing",
+            "Coding assistance",
+            "Document analysis",
+            "AI conversation"
+        ],
+
+        uses:[
+            "Writing",
+            "Coding",
+            "Analysis",
+            "Learning"
+        ],
+
+        advantages:[
+            "Strong writing capabilities",
+            "Useful for large documents"
+        ],
+
+        limitations:[
+            "Some features have usage limits",
+            "AI responses should be checked"
+        ],
+
+        best:
+        "Writers, students and developers"
+
+    },
+
+
+    "GitHub Copilot": {
+
+        overview:
+        "GitHub Copilot is an AI coding assistant that helps developers write and understand code.",
+
+        features:[
+            "Code suggestions",
+            "Code completion",
+            "Coding chat",
+            "Programming assistance"
+        ],
+
+        uses:[
+            "Software development",
+            "Learning programming",
+            "Debugging",
+            "Code generation"
+        ],
+
+        advantages:[
+            "Saves coding time",
+            "Useful inside development environments"
+        ],
+
+        limitations:[
+            "Generated code needs review",
+            "Requires developer understanding"
+        ],
+
+        best:
+        "Developers and programming students"
+
+    },
+
+
+    "Canva AI": {
+
+        overview:
+        "Canva AI provides AI-powered tools for creating designs, presentations and visual content.",
+
+        features:[
+            "AI design",
+            "Image generation",
+            "Presentation creation",
+            "Content creation"
+        ],
+
+        uses:[
+            "Posters",
+            "Presentations",
+            "Social media designs",
+            "Creative projects"
+        ],
+
+        advantages:[
+            "Beginner friendly",
+            "Easy design workflow"
+        ],
+
+        limitations:[
+            "Some AI features may be limited",
+            "Professional features may require payment"
+        ],
+
+        best:
+        "Students, designers and content creators"
+
+    },
+
+
+    "Perplexity": {
+
+        overview:
+        "Perplexity is an AI-powered search and research assistant.",
+
+        features:[
+            "AI search",
+            "Research assistance",
+            "Source-based answers",
+            "Question answering"
+        ],
+
+        uses:[
+            "Research",
+            "Learning",
+            "Fact finding",
+            "Exploration"
+        ],
+
+        advantages:[
+            "Useful for research",
+            "Provides sources for many answers"
+        ],
+
+        limitations:[
+            "Sources should still be checked",
+            "AI can make mistakes"
+        ],
+
+        best:
+        "Students and researchers"
+
+    }
+
+};
+
+
+/* =========================
+   NAVIGATION
+========================= */
+
+function showSection(sectionId, button){
+
+    document.querySelectorAll(".section")
+        .forEach(section => {
+            section.classList.remove("active");
+        });
+
+    const section =
+        document.getElementById(sectionId);
+
+    if(section){
+        section.classList.add("active");
+    }
+
+    document.querySelectorAll(".nav-btn")
+        .forEach(btn => {
+            btn.classList.remove("active");
+        });
+
+    if(button){
+        button.classList.add("active");
+    }
+
+}
+
+
+/* =========================
+   TOOL DETAILS
+========================= */
+
+function openTool(name){
+
+    const tool = tools[name];
+
+    if(!tool){
+        return;
+    }
+
+    document.getElementById("modalTitle")
+        .textContent = name;
+
+    document.getElementById("modalOverview")
+        .textContent = tool.overview;
+
+    createList(
+        "modalFeatures",
+        tool.features
+    );
+
+    createList(
+        "modalUses",
+        tool.uses
+    );
+
+    createList(
+        "modalAdvantages",
+        tool.advantages
+    );
+
+    createList(
+        "modalLimitations",
+        tool.limitations
+    );
+
+    document.getElementById("modalBest")
+        .textContent = tool.best;
+
+    document.getElementById("toolModal")
+        .style.display = "flex";
+}
+
+
+function createList(id, items){
+
+    const list =
+        document.getElementById(id);
+
+    list.innerHTML = "";
+
+    items.forEach(item => {
+
+        const li =
+            document.createElement("li");
+
+        li.textContent = item;
+
+        list.appendChild(li);
+
+    });
+
+}
+
+
+function openCustomTool(index){
+
+    const customTools =
+        JSON.parse(
+            localStorage.getItem("customAITools")
+        ) || [];
+
+    const tool =
+        customTools[index];
+
+    if(!tool){
+        return;
+    }
+
+    document.getElementById("modalTitle")
+        .textContent = tool.name;
+
+    document.getElementById("modalOverview")
+        .textContent = tool.description;
+
+    createList(
+        "modalFeatures",
+        tool.features
+    );
+
+    createList(
+        "modalUses",
+        tool.uses
+    );
+
+    createList(
+        "modalAdvantages",
+        tool.advantages
+    );
+
+    createList(
+        "modalLimitations",
+        tool.limitations
+    );
+
+    document.getElementById("modalBest")
+        .textContent = tool.bestFor;
+
+    document.getElementById("toolModal")
+        .style.display = "flex";
+}
+
+
+function closeToolModal(){
+
+    document.getElementById("toolModal")
+        .style.display = "none";
+
+}
+
+
+/* =========================
+   ADD AI TOOL
+========================= */
+
+function openAddTool(){
+
+    document.getElementById("addToolModal")
+        .style.display = "flex";
+
+}
+
+
+function closeAddTool(){
+
+    document.getElementById("addToolModal")
+        .style.display = "none";
+
+}
+
+
+function saveTool(){
+
+    const name =
+        document.getElementById("toolName")
+        .value.trim();
+
+    const category =
+        document.getElementById("toolCategory")
+        .value.trim();
+
+    const description =
+        document.getElementById("toolDescription")
+        .value.trim();
+
+    const website =
+        document.getElementById("toolWebsite")
+        .value.trim();
+
+    const features =
+        document.getElementById("toolFeatures")
+        .value
+        .split(",")
+        .map(item => item.trim())
+        .filter(item => item !== "");
+
+    const uses =
+        document.getElementById("toolUses")
+        .value
+        .split(",")
+        .map(item => item.trim())
+        .filter(item => item !== "");
+
+    const advantages =
+        document.getElementById("toolAdvantages")
+        .value
+        .split(",")
+        .map(item => item.trim())
+        .filter(item => item !== "");
+
+    const limitations =
+        document.getElementById("toolLimitations")
+        .value
+        .split(",")
+        .map(item => item.trim())
+        .filter(item => item !== "");
+
+    const bestFor =
+        document.getElementById("toolBestFor")
+        .value
+        .trim();
+
+
+    if(name === "" || description === ""){
+
+        alert(
+            "Please enter Tool Name and Description."
+        );
+
+        return;
+
+    }
+
+
+    const newTool = {
+
+        name:name,
+
+        category:
+        category || "AI Tool",
+
+        description:description,
+
+        website:website,
+
+        features:features,
+
+        uses:uses,
+
+        advantages:advantages,
+
+        limitations:limitations,
+
+        bestFor:
+        bestFor || "General users"
+
+    };
+
+
+    let customTools =
+        JSON.parse(
+            localStorage.getItem("customAITools")
+        ) || [];
+
+
+    customTools.push(newTool);
+
+
+    localStorage.setItem(
+        "customAITools",
+        JSON.stringify(customTools)
+    );
+
+
+    addCustomToolCard(
+        newTool,
+        customTools.length - 1
+    );
+
+
+    clearToolForm();
+
+    closeAddTool();
+
+    alert(
+        "AI Tool added successfully! 🤖"
+    );
+
+}
+
+
+function addCustomToolCard(tool,index){
+
+    const grid =
+        document.getElementById("toolsGrid");
+
+
+    const card =
+        document.createElement("div");
+
+    card.className =
+        "tool-card searchable custom-tool";
+
+
+    card.setAttribute(
+        "data-name",
+        tool.name.toLowerCase()
+    );
+
+
+    card.innerHTML = `
+
+        <div class="tool-icon">
+            🤖
+        </div>
+
+        <h3>${escapeHTML(tool.name)}</h3>
+
+        <span class="category">
+            ${escapeHTML(tool.category)}
+        </span>
+
+        <p>
+            ${escapeHTML(tool.description)}
+        </p>
+
+        <button class="view-btn"
+                onclick="openCustomTool(${index})">
+
+            View Details
+
+        </button>
+
+    `;
+
+
+    grid.appendChild(card);
+
+}
+
+
+function loadCustomTools(){
+
+    const customTools =
+        JSON.parse(
+            localStorage.getItem("customAITools")
+        ) || [];
+
+
+    customTools.forEach(
+        (tool,index) => {
+
+            addCustomToolCard(
+                tool,
+                index
+            );
+
+        }
+    );
+
+}
+
+
+function clearToolForm(){
+
+    document.getElementById("toolName")
+        .value = "";
+
+    document.getElementById("toolCategory")
+        .value = "";
+
+    document.getElementById("toolDescription")
+        .value = "";
+
+    document.getElementById("toolWebsite")
+        .value = "";
+
+    document.getElementById("toolFeatures")
+        .value = "";
+
+    document.getElementById("toolUses")
+        .value = "";
+
+    document.getElementById("toolAdvantages")
+        .value = "";
+
+    document.getElementById("toolLimitations")
+        .value = "";
+
+    document.getElementById("toolBestFor")
+        .value = "";
+
+}
+
+
+/* =========================
+   SEARCH
+========================= */
+
+function searchTools(){
+
+    const search =
+        document.getElementById("searchInput")
+        .value
+        .toLowerCase();
+
+
+    document.querySelectorAll(
+        ".searchable"
+    ).forEach(card => {
+
+        const name =
+            card.getAttribute("data-name")
+            || "";
+
+        const text =
+            card.innerText.toLowerCase();
+
+
+        if(
+            name.includes(search)
+            ||
+            text.includes(search)
+        ){
+
+            card.classList.remove("hidden");
+
+        }else{
+
+            card.classList.add("hidden");
+
+        }
+
+    });
+
+}
+
+
+/* =========================
+   TOOL FINDER
+========================= */
+
+function findTool(){
+
+    const category =
+        document.getElementById("finderSelect")
+        .value;
+
+    const result =
+        document.getElementById("finderResult");
+
+
+    if(category === ""){
+
+        result.innerHTML =
+            "<p style='margin-top:20px;color:#aeb5cd;'>Please select a category.</p>";
+
+        return;
+
+    }
+
+
+    let message = "";
+
+
+    if(category === "study"){
+
+        message =
+        "📚 Recommended: ChatGPT, Google Gemini and Perplexity.";
+
+    }
+
+    else if(category === "coding"){
+
+        message =
+        "💻 Recommended: GitHub Copilot, ChatGPT and Claude.";
+
+    }
+
+    else if(category === "design"){
+
+        message =
+        "🎨 Recommended: Canva AI and ChatGPT.";
+
+    }
+
+    else if(category === "research"){
+
+        message =
+        "🔬 Recommended: Perplexity and Google Gemini.";
+
+    }
+
+    else if(category === "writing"){
+
+        message =
+        "✍️ Recommended: ChatGPT and Claude.";
+
+    }
+
+
+    result.innerHTML = `
+
+        <div class="card"
+             style="margin-top:20px;">
+
+            <h3>AI Tool Recommendation</h3>
+
+            <p>
+                ${message}
+            </p>
+
+        </div>
+
+    `;
+
+}
+
+
+/* =========================
+   SIMPLE CHAT
+========================= */
+
+function handleChatKey(event){
+
+    if(event.key === "Enter"){
+
+        sendMessage();
+
+    }
+
+}
+
+
+function sendMessage(){
+
+    const input =
+        document.getElementById("chatInput");
+
+    const question =
+        input.value.trim();
+
+
+    if(question === ""){
+
+        return;
+
+    }
+
+
+    addChatMessage(
+        question,
+        "user"
+    );
+
+
+    input.value = "";
+
+
+    setTimeout(() => {
+
+        const answer =
+            getDemoAIAnswer(question);
+
+        addChatMessage(
+            answer,
+            "bot"
+        );
+
+    },500);
+
+}
+
+
+function addChatMessage(message,type){
+
+    const chat =
+        document.getElementById("chatMessages");
+
+
+    const div =
+        document.createElement("div");
+
+
+    if(type === "user"){
+
+        div.className =
+            "user-message";
+
+    }else{
+
+        div.className =
+            "bot-message";
+
+    }
+
+
+    div.textContent =
+        message;
+
+
+    chat.appendChild(div);
+
+
+    chat.scrollTop =
+        chat.scrollHeight;
+
+}
+
+
+/*
+    This is only a demo response system.
+    For real AI answers, a backend/API
+    needs to be connected.
+*/
+
+function getDemoAIAnswer(question){
+
+    const q =
+        question.toLowerCase();
+
+
+    if(q.includes("what is ai")){
+
+        return "AI stands for Artificial Intelligence. It allows computers to perform tasks that normally require human intelligence.";
+
+    }
+
+
+    if(q.includes("machine learning")){
+
+        return "Machine Learning is a part of AI where computers learn patterns from data and use those patterns to make predictions or decisions.";
+
+    }
+
+
+    if(q.includes("python")){
+
+        return "Python is a popular programming language used in web development, automation, data science, Machine Learning and AI.";
+
+    }
+
+
+    if(q.includes("chatgpt")){
+
+        return "ChatGPT is an AI assistant that can help with learning, writing, coding, brainstorming and many other tasks.";
+
+    }
+
+
+    if(q.includes("coding")){
+
+        return "For coding, useful AI tools include GitHub Copilot, ChatGPT and Claude. Always understand and verify AI-generated code.";
+
+    }
+
+
+    return "I am currently running in Demo Chat mode. To answer any question intelligently, connect this chat to an AI API through a secure backend.";
+
+}
+
+
+/* =========================
+   SECURITY HELPER
+========================= */
+
+function escapeHTML(text){
+
+    const div =
+        document.createElement("div");
+
+    div.textContent =
+        text;
+
+    return div.innerHTML;
+
+}
+
+
+/* =========================
+   CLOSE MODALS
+========================= */
+
+window.onclick = function(event){
+
+    const toolModal =
+        document.getElementById("toolModal");
+
+    const addToolModal =
+        document.getElementById("addToolModal");
+
+
+    if(event.target === toolModal){
+
+        toolModal.style.display =
+            "none";
+
+    }
+
+
+    if(event.target === addToolModal){
+
+        addToolModal.style.display =
+            "none";
+
+    }
+
+};
+
+
+/* =========================
+   LOAD SAVED TOOLS
+========================= */
+
+window.onload = function(){
+
+    loadCustomTools();
+
+};
+
+</script>
+
+</body>
+</html>
